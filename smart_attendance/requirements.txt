@@ -1,6 +1,0 @@
-opencv-python
-face-recognition
-numpy
-pandas
-streamlit
-streamlit-webrtc
