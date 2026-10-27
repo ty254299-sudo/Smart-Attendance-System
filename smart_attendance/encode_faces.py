@@ -5,6 +5,8 @@ from pathlib import Path
 
 import face_recognition
 
+from database import initialize_database, register_students
+
 BASE_DIR = Path(__file__).resolve().parent
 DATASET_DIR = BASE_DIR / "dataset"
 ENCODINGS_FILE = BASE_DIR / "encodings.pickle"
@@ -26,6 +28,7 @@ def encode_known_faces() -> None:
 
     known_encodings = []
     known_names = []
+    enrolled_students = []
 
     print("[INFO] Processing dataset images...")
     for image_path in image_paths:
@@ -47,11 +50,14 @@ def encode_known_faces() -> None:
 
         known_encodings.append(encodings[0])
         known_names.append(identifier)
+        enrolled_students.append((identifier, image_path.name))
         print(f"  [+] Enrolled: {identifier}")
 
     data = {"encodings": known_encodings, "names": known_names}
     with ENCODINGS_FILE.open("wb") as encoding_file:
         pickle.dump(data, encoding_file)
+    initialize_database()
+    register_students(enrolled_students)
 
     print(f"\n[SUCCESS] Encoded {len(known_names)} face(s) to '{ENCODINGS_FILE.name}'.")
 
